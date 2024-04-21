@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CG-lab-4-1</title>
+    <style>
+        body { 
+            margin: 0; 
+            box-sizing: border-box;
+        }
+        canvas { display: block; }
+        #button-container {
+            position: relative;
+        }
+
+        .button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        .scene-containers {
+            display: flex;
+            justify-content: space-between;
+            width: 100vw;
+        }
+    </style>
+</head>
+<body>
+    <div id="button-container">
+        <button id="rotationBtn" class="button">Toggle Rotation</button>
+    </div>
+    <div class="scene-containers">
+        <div id="without-minimaps"></div>
+        <div id="with-minimaps"></div>
+    </div>
+    <script src="/src/common/helper-script.ts"></script>
+    <script src="/src/cg-lab4-1/script.ts" type="module"></script>
+    <script src="/src/cg-lab4-1/script-minimaps.ts" type="module"></script>
+</body>
+</html>

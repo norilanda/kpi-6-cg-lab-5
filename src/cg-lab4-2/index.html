@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CG-lab-4-2</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+        #button-container {
+            position: relative;
+        }
+
+        .button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="button-container">
+        <button id="rotationBtn" class="button">Toggle Rotation</button>
+    </div>
+    <script src="/src/common/helper-script.ts"></script>
+    <script src="/src/cg-lab4-2/script.ts" type="module"></script>
+</body>
+</html>
