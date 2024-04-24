@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { rotateScene } from "../common/helper-script";
+import { initialX, initialY, initialZ, textureFile } from './script-common';
 
 // Create a scene
 const scene = new THREE.Scene();
@@ -11,7 +12,7 @@ const getWidth = () => {
 
 // Create a camera
 const camera = new THREE.PerspectiveCamera(75, getWidth() / window.innerHeight, 0.1, 1000);
-camera.position.z = 2.5;
+camera.position.z = initialZ;
 
 // Create a renderer
 const renderer = new THREE.WebGLRenderer();
@@ -21,28 +22,26 @@ containerElement!.appendChild(renderer.domElement);
 
 const geometry = new THREE.BoxGeometry();
 
-const texture = new THREE.TextureLoader().load('/textures/leaf.bmp' ); 
+const texture = new THREE.TextureLoader().load(textureFile); 
+// this is already set by default
+texture.generateMipmaps = true
+texture.minFilter = THREE.LinearMipMapLinearFilter;
 
 const material = new THREE.MeshBasicMaterial( { map:texture } );
 
-const colors = {
-    'lilac': 0xC8A2C8,
-    'lemon': 0xFDE910,
-    'brown': 0x993300,
-    'aqua': 0x00FFFF,
-    'cherry': 0x640023,
-    'salad': 0x7FFF00
-}
 const materials = [
-    new THREE.MeshBasicMaterial({ color: colors.lilac }), // right
-    new THREE.MeshBasicMaterial({ color: colors.lemon }), // left
+    material, // right
+    material, // left
     material, // top
     material, // bottom
-    new THREE.MeshBasicMaterial({ color: colors.cherry }), // front
-    new THREE.MeshBasicMaterial({ color: colors.salad })  // back
+    material, // front
+    material // back
 ];
 
 const cube = new THREE.Mesh(geometry, materials);
+// cube.position.x = -0.2;
+cube.rotation.x = initialX;
+cube.rotation.y = initialY;
 scene.add(cube);
 
 const controls = new OrbitControls( camera, renderer.domElement );
@@ -67,7 +66,7 @@ const rotateObject = () => {
 const animate = () => {
     requestAnimationFrame(animate);
     if (rotateScene) {
-        rotateObject();
+        // rotateObject();
     }
     renderScene();
 }
