@@ -2,9 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CG-lab-4-2</title>
+    <title>CG-lab-4-1</title>
     <style>
-        body { margin: 0; }
+        body { 
+            margin: 0; 
+            box-sizing: border-box;
+        }
         canvas { display: block; }
         #button-container {
             position: relative;
@@ -20,13 +23,25 @@
             border: none;
             cursor: pointer;
         }
+        .scene-containers {
+            display: flex;
+            justify-content: space-between;
+            width: 100vw;
+        }
     </style>
 </head>
 <body>
     <div id="button-container">
         <button id="rotationBtn" class="button">Toggle Rotation</button>
     </div>
+    <div class="scene-containers">
+        <div id="left">
+        </div>
+        <div id="right">
+        </div>
+    </div>
     <script src="/src/common/helper-script.ts"></script>
     <script src="/src/cg-lab4-2/script.ts" type="module"></script>
+    <script src="/src/cg-lab4-2/script-cylinder.ts" type="module"></script>
 </body>
 </html>
