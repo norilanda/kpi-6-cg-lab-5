@@ -25,6 +25,7 @@ const geometry = new THREE.BoxGeometry(sideSize, sideSize, sideSize);
 const texture = new THREE.TextureLoader().load(textureFile); 
 texture.wrapS = THREE.RepeatWrapping;
 texture.wrapT = THREE.RepeatWrapping;
+texture.repeat.set(0.25, 1);
 texture.generateMipmaps = false;
 
 let Angle = 0;
