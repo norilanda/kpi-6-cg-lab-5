@@ -14,31 +14,84 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-const geometry = new THREE.BoxGeometry();
+let cube: THREE.Mesh;
 
-const texture = new THREE.TextureLoader().load('/textures/2x2.bmp' ); 
+function genRGBATexture(bmpFileName: string) {
+    return new Promise((resolve, reject) => {
+        const bmp = new Image();
+        const tw = 512;
+        const th = 512;
+        let arrayRGBA = new Uint8Array(th * tw * 4);
 
-// Configure texture wrap mode to repeat
-texture.wrapS = THREE.RepeatWrapping;
-texture.wrapT = THREE.RepeatWrapping;
+        bmp.onload = function() {
+            const canvas = document.createElement('canvas');
+            canvas.width = tw;
+            canvas.height = th;
+            const ctx = canvas.getContext('2d');
+            ctx!.drawImage(bmp, 0, 0, tw, th);
 
-// Set the repeat factor for the texture
-const repeatFactor = 4.0;
-texture.repeat.set(repeatFactor, repeatFactor);
+            for (let i = 0; i < tw; i++) {
+                for (let j = 0; j < th; j++) {
+                    const index = (j * tw + i) * 4;
+                    const pixelData = ctx!.getImageData(i, j, 1, 1).data;
+                    const isWhite = pixelData[0] > 250 && pixelData[1] > 250 && pixelData[2] > 250;
+                    arrayRGBA[index] = pixelData[0];
+                    arrayRGBA[index + 1] = pixelData[1];
+                    arrayRGBA[index + 2] = pixelData[2];
+                    arrayRGBA[index + 3] = (isWhite) ? 0 : 255;
+                }
+            }
 
-const material = new THREE.MeshBasicMaterial( { map:texture } );
+            const texture = new THREE.DataTexture(arrayRGBA, tw, th, THREE.RGBAFormat);
+            texture.needsUpdate = true;
 
-const materials = [
-    material, // right
-    material, // left
-    material, // top
-    material, // bottom
-    material, // front
-    material,  // back
-];
+            texture.magFilter = THREE.LinearFilter;
+            texture.minFilter = THREE.LinearFilter;
 
-const cube = new THREE.Mesh(geometry, materials);
-scene.add(cube);
+            resolve(texture);
+        };
+
+        bmp.onerror = function(error) {
+            reject(error);
+        };
+
+        bmp.src = bmpFileName;
+    });
+}
+
+async function draw3D() {
+    const h = 1.0;
+    const r = h * 1.1;
+
+    const texture1 = new THREE.TextureLoader().load('/textures/2x2.bmp');
+    const texture2 = await genRGBATexture('/textures/spider.bmp') as THREE.Texture;
+    texture2.flipY = true;
+
+    // full transparent material
+    const material = new THREE.MeshBasicMaterial({
+        map: texture1,
+        transparent: true,
+        opacity: 0.0
+    });
+
+    // base texture
+    const materialBase = new THREE.MeshBasicMaterial({ map: texture1, transparent: true });
+    materialBase.side = THREE.DoubleSide;
+    const geometryCube = new THREE.BoxGeometry(h, h, h);
+    cube = new THREE.Mesh(geometryCube, [materialBase, materialBase, materialBase, materialBase, material, materialBase]);
+    scene.add(cube);
+
+    // spider texture
+    const materialSpider = new THREE.MeshBasicMaterial({ map: texture2, transparent: true });
+    materialSpider.side = THREE.DoubleSide;
+    materialBase.blendSrcAlpha = THREE.OneMinusDstAlphaFactor;
+    const geometrySpider = new THREE.PlaneGeometry(r, r);
+    const spider = new THREE.Mesh(geometrySpider, materialSpider);
+    spider.position.set(0, 0, 0.501);
+    cube.add(spider);
+}
+
+await draw3D();
 
 const controls = new OrbitControls( camera, renderer.domElement );
 controls.update();
@@ -61,7 +114,7 @@ const rotateObject = () => {
 
 const animate = () => {
     requestAnimationFrame(animate);
-    if (rotateScene) {
+    if (cube && rotateScene) {
         rotateObject();
     }
     renderScene();
